@@ -35,9 +35,19 @@ The steps for calculating tissue weighted regional averages of NDI and ODI are b
 3. Extract region of interest measures for NDI, ODI and 1-ISO.
 4. Divide regional NDI and ODI measures by corresponding 1-ISO region.
 
-We will use the example NODDI dataset (LINK HERE) to calculate tissue weighted NDI and ODI measures for tracts of interest.
+We will use the NODDI outputs from the example NODDI dataset to calculate tissue weighted NDI and ODI measures for tracts of interest.
+
 
 ## 1. Generating Tissue Fraction Maps (1-ISO)
+
+- We start from the NODDI outputs and assume you have already fit the NODDI model to your data.
+  - For help on fitting the NODDI model please visit http://mig.cs.ucl.ac.uk/index.php?n=Tutorial.NODDImatlab
+  - Example diffusion MRI data can be found here (free account needed): https://www.nitrc.org/projects/noddi_toolbox
+  -
+
+```
+
+```
 
 ## 2. Multiplying NDI and ODI Maps by 1-ISO
 
