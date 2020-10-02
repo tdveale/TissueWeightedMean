@@ -7,12 +7,14 @@ NODDI (**N**eurite **O**rientation **D**ispersion and **D**ensity **I**maging) i
   - **ISO**: Isotropic diffusion fraction
 
 The remaining diffusion within a voxel is attributed to brain tissue and split into two compartments:
+
 2. Extra-neurite diffusion compartment (i.e. water outside axons).
 3. Intra-neurite diffusion compartment (i.e. water within axons).
 
   Two microstructural properties can be modelled from the intra-neurite compartment:
-    - **NDI**: Neurite Density Index
-    - **ODI**: Orientation Dispersion Index
+  
+   - **NDI**: Neurite Density Index
+   - **ODI**: Orientation Dispersion Index
 
 ## Why Tissue Weighting?
 
