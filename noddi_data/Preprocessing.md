@@ -1,6 +1,6 @@
 # Preprocessing Steps Used for Example Data
 
-These steps do not need to be carried out as the data is already made available here. We provide the information below for completeness and transparency.
+These steps do not need to be carried out as the data to complete the tissue weighting tutorial is already made available here. We provide the information below for completeness and transparency.
 
 
 ## 1. Prepare Example Data Files
@@ -124,36 +124,122 @@ ae.save_results()
 ```
 
 
-
 # 4. Generate ROI Masks
 
-We will use white matter ROIs from the JHU atlas (LINK HERE) to create basic regional measurements for calculating tissue weighted averages.
+## Create ROIs using ICBM template
 
-First we calculated FA to register to standard space.
+The principal of tissue weighted average measures apply to a range of ROI measures (i.e. FreeSurfer cortical ROIs, white matter tracts and white matter regions). Here we will use white matter fibre bundle ROIs from the ICBM atlas (LINK HERE) to create basic regional measurements for calculating tissue weighted averages.
+
+INSERT INFO ON ACCESS AND DOWNLOADING NECESSARY FILES FROM ICBM https://www.nitrc.org/projects/iit/
+
+The ICBM template provides track densities from whole brain tractogram and segmented using RecoBundles (Neuroimage 2018;170:283-295). A selection of major fibre bundles were thresholded manually after visualisation of track densities and binarised to create ROIs.
 
 ```
-cd example_subject/
+fslmaths CC_256.nii.gz -thr 50 -bin CC_256_roi.nii.gz
+fslmaths C_L_256.nii.gz -thr 20 -bin C_L_256_roi.nii.gz
+fslmaths C_R_256.nii.gz -thr 20 -bin C_R_256_roi.nii.gz
+fslmaths CST_L_256.nii.gz -thr 20 -bin CST_L_256_roi.nii.gz
+fslmaths CST_R_256.nii.gz -thr 20 -bin CST_R_256_roi.nii.gz
+fslmaths UF_L_256.nii.gz -thr 10 -bin UF_L_256_roi.nii.gz
+fslmaths UF_R_256.nii.gz -thr 10 -bin UF_R_256_roi.nii.gz
+```
+
+
+## Mapping ICBM ROIs to Native Space
+
+In order to use the ICBM atlas ROIs, we need to map these ROIs from standard space into the native space of the NODDI example data. We will do this by registering the example data to an ICBM tensor template using the DTI-TK package (http://dti-tk.sourceforge.net) and then inverting the transformation to bring the ROIs back into native space.
+
+### Setting up Files
+
+We will use the `IITmean_tensor_256.nii.gz` image as a template to calculate the transformation of the NODDI example data to template space.
+
+First we need to do some basic DTI processing in FSL to fit the tensors.
+
+```
 dtifit -k NODDI_DWI.nii.gz -m NODDI_DWI_mask.nii.gz -o NODDI_DWI -r NODDI_protocol.bvec -b NODDI_protocol.bval --wls --save_tensor
 ```
 
-Then we used the tbss registration scripts from FSL to warp the NODDI example data to MNI space
+Then we need to convert FSL outputs to the DTI-TK file format.
 
 ```
-mkdir tbss_reg
-cp NODDI_DWI_FA.nii.gz tbss_reg/NODDI_DWI_FA.nii.gz
-cd tbss_reg/
-tbss_1_preproc NODDI_DWI_FA.nii.gz
-tbss_2_reg -T
-tbss_3_postreg -S
+fsl_to_dtitk NODDI_DWI
 ```
 
-We can then inverse the transformation to map the JHU ROIs back into native space.
+This will provide the tensor image `NODDI_DWI_dtitk.nii.gz` which we will use to register to the ICBM atlas tensor image (`IITmean_tensor_256.nii.gz`)
+
+### Registering Example NODDI dataset to ICBM template
+
+Perform rigid registration
 
 ```
-convert_xfm -omat FA/NODDI_DWI_FA_target_to_FA.mat -inverse FA/NODDI_DWI_FA_FA_to_target.mat
+dti_rigid_reg IITmean_tensor_256.nii.gz NODDI_DWI_dtitk.nii.gz EDS 4 4 4 0.01
 ```
 
-The inverted transformation can then be used to bring the ROIs back into native space.
+Perform affine registration
+
 ```
-flirt -in $FSLDIR/data/atlases/JHU/JHU-ICBM-labels-1mm.nii.gz -ref NODDI_DWI_FA.nii.gz -applyxfm -init tbss_reg/FA/NODDI_DWI_FA_target_to_FA.mat -o jhu_roi_native_2.nii
+dti_affine_reg IITmean_tensor_256.nii.gz NODDI_DWI_dtitk.nii.gz EDS 4 4 4 0.01 1
+```
+
+Non-linearly register NODDI example data to ICBM template
+
+```
+dti_diffeomorphic_reg IITmean_tensor_256.nii.gz NODDI_DWI_dtitk_aff.nii.gz IITmean_tensor_mask_256.nii.gz 1 5 0.002
+```
+
+
+### Inverting Transformation
+
+We need to invert the transformation to now map the images in the opposite direction `IITmean_tensor_256.nii.gz` -> `NODDI_DWI_dtitk.nii.gz`
+
+Invert the affine transformation
+```
+affine3Dtool -in NODDI_DWI_dtitk.aff -invert -out NODDI_DWI_dtitk_inv.aff
+```
+
+Invert the deformable transformation
+
+```
+dfToInverse -in NODDI_DWI_dtitk_aff_diffeo.df.nii.gz
+```
+
+Combine these inverted transformations to now map from template -> native space in one step
+
+```
+dfLeftComposeAffine -df NODDI_DWI_dtitk_aff_diffeo.df_inv.nii.gz -aff NODDI_DWI_dtitk_inv.aff -out NODDI_DWI_dtitk_combined.df_inv.nii.gz
+```
+
+### Mapping ROIs back into Native Space
+
+We can now use `NODDI_DWI_dtitk_combined.df_inv.nii.gz` as our transformation to bring the ROIs in ICBM template space back into the native space. This can be done with another dti-tk command called `deformationScalarVolume`.
+
+We can loop through each fibre bundle ROIs we created earlier and map them back into the native NODDI example data space.
+
+```
+for roi in *_256_roi.nii.gz; do deformationScalarVolume -in ${roi} -trans NODDI_DWI_dtitk_combined.df_inv.nii.gz -target NODDI_DWI_dtitk.nii.gz -interp 1 -out ${roi%.nii.gz}_native.nii.gz; done
+```
+
+# 5. Start Extracting Tissue Weighting Average Measures!
+
+Congratulations! You should now have all you need to recreate the data for the NODDI tissue weighting tutorial.
+
+See below for a checklist of the files used in this tutorial:
+
+AMICO NODDI outputs:
+```
+FIT_dir.nii.gz
+FIT_ICVF.nii.gz
+FIT_ISOVF.nii.gz
+FIT_OD.nii.gz
+```
+
+Fibre bundle ROIs in native NODDI data space:
+```
+CC_256_roi_native.nii.gz
+C_L_256_roi_native.nii.gz
+C_R_256_roi_native.nii.gz
+CST_L_256_roi_native.nii.gz
+CST_R_256_roi_native.nii.gz
+UF_L_256_roi_native.nii.gz
+UF_R_256_roi_native.nii.gz   
 ```
