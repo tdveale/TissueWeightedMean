@@ -1,7 +1,7 @@
 # NODDI Tissue Weighting
 
 ## What is NODDI?
-NODDI (**N**eurite **O**rientation **D**ispersion and **D**ensity **I**maging) is a microstructural modelling approach for diffusion MRI data. Diffusion within a voxel is modelled using three separate compartments representing 3 microstructural environments:
+NODDI (**N**eurite **O**rientation **D**ispersion and **D**ensity **I**maging) is a microstructural modelling approach for diffusion MRI data. Diffusion within a voxel is modelled using three compartments representing three microstructural environments:
 
 1. Isotropic diffusion compartment (i.e. water in free flowing regions like CSF). The NODDI model provides this directly as:
   - **ISO**: Isotropic diffusion fraction
@@ -12,13 +12,13 @@ The remaining diffusion within a voxel is attributed to brain tissue and split i
 3. Intra-neurite diffusion compartment (i.e. water within axons).
 
   Two microstructural properties can be modelled from the intra-neurite compartment:
-  
+
    - **NDI**: Neurite Density Index
    - **ODI**: Orientation Dispersion Index
 
 ## Why Tissue Weighting?
 
-Voxels deep within the brain will have low **ISO** values as they are far from the CSF and most of the diffusion is attributed to the brain tissue. **NDI** and **ODI** here will be comparable across voxels as they are associated with the majority of diffusion within the voxel.
+Voxels deep within the brain will have lower **ISO** values as they are far from the CSF and most of the diffusion is attributed to the brain tissue. **NDI** and **ODI** here will be comparable across voxels as they are associated with the majority of diffusion within the voxel.
 
 However, this does not apply in regions near the CSF such as the corpus callosum and cortical grey matter. Voxels closer to the CSF will have higher **ISO** values compared to voxels deeper in the brain. This becomes troubling when extracting regions of interest measures. Although voxels within a these regions will vary in the fraction of tissue the **NDI** and **ODI** are calculated from, all voxels are treated equally.
 
