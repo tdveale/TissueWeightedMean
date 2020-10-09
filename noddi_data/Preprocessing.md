@@ -190,7 +190,7 @@ dti_diffeomorphic_reg IITmean_tensor_256.nii.gz NODDI_DWI_dtitk_aff.nii.gz IITme
 
 ### Inverting Transformation
 
-We need to invert the transformation to now map the images in the opposite direction `IITmean_tensor_256.nii.gz` -> `NODDI_DWI_dtitk.nii.gz`
+We need to invert the transformation to now map the images in the opposite direction `IITmean_tensor_256.nii.gz` -> `NODDI_DWI_dtitk.nii.gz`. More information about these steps can be found here http://dti-tk.sourceforge.net/pmwiki/pmwiki.php?n=Documentation.OptionspostReg
 
 Invert the affine transformation
 ```
