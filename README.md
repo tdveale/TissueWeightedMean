@@ -20,7 +20,7 @@ The remaining diffusion within a voxel is attributed to brain tissue and split i
 
 Voxels deep within the brain will have lower **ISO** values as they are far from the CSF and most of the diffusion is attributed to the brain tissue. **NDI** and **ODI** here will be comparable across voxels as they are associated with the majority of diffusion within the voxel.
 
-However, this does not apply in regions near the CSF such as the corpus callosum and cortical grey matter. Voxels closer to the CSF will have higher **ISO** values compared to voxels deeper in the brain. This becomes troubling when extracting regions of interest measures. Although voxels within a these regions will vary in the fraction of tissue the **NDI** and **ODI** are calculated from, all voxels are treated equally.
+However, this does not apply in regions near the CSF such as the corpus callosum and cortical grey matter. Voxels closer to the CSF will have higher **ISO** values compared to voxels deeper in the brain. This becomes troubling when extracting regions of interest measures. Although voxels within these regions will vary in the fraction of tissue the **NDI** and **ODI** are calculated from, all voxels are treated equally.
 
 We can account for this by assigning greater importance to voxels with a higher tissue fraction (i.e. lower **ISO**). This can be done by calculating a weighted average of **NDI** and **ODI** in regions of interest, where the tissue fraction (**1-ISO**) are the weights.
 
