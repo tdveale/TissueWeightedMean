@@ -23,7 +23,7 @@ fslchfiletype NIFTI_GZ NODDI_DWI
 
 ## 2. Create Whole Brain Mask
 
-We used MRtrix3 (https://www.mrtrix.org) to create a whole brain mask used in the NODDI fitting:
+We used MRtrix3 [https://www.mrtrix.org] to create a whole brain mask used in the NODDI fitting:
 
 ```
 dwi2mask -fslgrad NODDI_protocol.bvec NODDI_protocol.bval NODDI_DWI.nii.gz NODDI_DWI_mask.nii.gz
@@ -31,9 +31,9 @@ dwi2mask -fslgrad NODDI_protocol.bvec NODDI_protocol.bval NODDI_DWI.nii.gz NODDI
 
 ## 3. Fit NODDI Model Using AMICO
 
-We used the AMICO toolbox in python to fit the NODDI model for speed purposes (https://github.com/daducci/AMICO/wiki/Fitting-the-NODDI-model). This requires the `spams` and `amico` python libraries to be installed. The steps here follow the AMICO tutorial in the above link.
+We used the AMICO toolbox in python to fit the NODDI model for speed purposes [https://github.com/daducci/AMICO/wiki/Fitting-the-NODDI-model]. This requires the `spams` and `amico` python libraries to be installed. The steps here follow the AMICO tutorial in the above link.
 
-If you prefer MATLAB, steps on fitting the NODDI model in the MATLAB toolbox can be found here http://mig.cs.ucl.ac.uk/index.php?n=Tutorial.NODDImatlab
+If you prefer MATLAB, steps on fitting the NODDI model in the MATLAB toolbox can be found here: http://mig.cs.ucl.ac.uk/index.php?n=Tutorial.NODDImatlab
 
 To fit NODDI with AMICO in python, first move back up to the directory tree (for AMICO to see directory structure)
 
@@ -128,9 +128,7 @@ ae.save_results()
 
 ## Create ROIs using IIT template
 
-The principal of tissue weighted average measures apply to a range of ROI measures (i.e. FreeSurfer cortical ROIs, white matter tracts and white matter regions). Here we will use white matter fibre bundle ROIs from the IIT human brain atlas (LINK HERE) to create basic regional measurements for calculating tissue weighted averages.
-
-INSERT INFO ON ACCESS AND DOWNLOADING NECESSARY FILES FROM IIT https://www.nitrc.org/projects/iit/
+The principal of tissue weighted average measures apply to a range of ROI measures (i.e. FreeSurfer cortical ROIs, white matter tracts and white matter regions). Here we will use white matter fibre bundle ROIs from the IIT human brain atlas [https://www.nitrc.org/projects/iit/] to create basic regional measurements for calculating tissue weighted averages.
 
 The IIT template provides track densities from whole brain tractogram and segmented using RecoBundles (Neuroimage 2018;170:283-295). A selection of major fibre bundles were thresholded manually after visualisation of track densities and binarised to create ROIs.
 
@@ -147,7 +145,7 @@ fslmaths UF_R_256.nii.gz -thr 10 -bin UF_R_256_roi.nii.gz
 
 ## Mapping IIT ROIs to Native Space
 
-In order to use the IIT atlas ROIs, we need to map these ROIs from standard space into the native space of the NODDI example data. We will do this by registering the example data to an IIT tensor template using the DTI-TK package (http://dti-tk.sourceforge.net) and then inverting the transformation to bring the ROIs back into native space.
+In order to use the IIT atlas ROIs, we need to map these ROIs from standard space into the native space of the NODDI example data. We will do this by registering the example data to an IIT tensor template using the DTI-TK package [http://dti-tk.sourceforge.net] and then inverting the transformation to bring the ROIs back into native space.
 
 ### Setting up Files
 
