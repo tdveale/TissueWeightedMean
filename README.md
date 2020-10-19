@@ -46,7 +46,7 @@ We will use the NODDI outputs from the example NODDI dataset [http://mig.cs.ucl.
 
 ### Software
 
-This tutorial is performed on the linux terminal (bash) and requires FSL to be installed.
+This tutorial is performed on the linux terminal (bash) and requires FSL to be installed. We used FSL 6.0.3 but has also been tested on FSL 5.0.9.
 
 ### Files
 
@@ -56,9 +56,11 @@ To perform tissue weighted average correction, you will need the following outpu
 - NDI image (* *_ficvf.nii.gz* or *FIT_ICVF.nii.gz*)
 - ODI image (* *_odi.nii.gz* or *FIT_OD.nii.gz*)
 - Brain mask for NODDI images (* *_mask.nii.gz*)
-- Regions of interest in NODDI image space (* *roi_native.nii.gz*) [for example using the JHU Atlas]
+- Regions of interest in NODDI image space (* *roi_native.nii.gz*) [for example using the IIT fibres ROIs in this tutorial]
 
-To follow this tutorial exactly, download and extract the zip files in `noddi_data/` into one directory on your computer. Preprocessing steps for recreating this data can be found in `noddi_data/Preprocessing.md`
+We used AMICO [Daducci *et al.*, NeuroImage 2015] to create our NODDI maps which have the filename convention of `FIT_*.nii.gz`. Details on how we processed the example data used below can be found in `noddi_data/Preprocessing.md`.
+
+To follow this tutorial exactly, download and extract `noddi_data/AMICO_FIT.zip` and `noddi_data/ICBM_native_rois.zip` into the same directory on your computer.
 
 ## 1. Generating Tissue Fraction Maps (1-ISO)
 
@@ -71,8 +73,9 @@ fslmaths FIT_ISOVF.nii.gz -mul -1 -add 1 -mas NODDI_DWI_mask.nii.gz FIT_ISOVF_ft
 ```
 
 The **tissue fraction map image** should look like below:
+### Tissue Fraction Map
 
-FTISSUE IMAGE HERE
+![alt text](noddi_data/screenshots/FTISSUE.png)
 
 ## 2. Multiplying NDI and ODI Maps by 1-ISO
 
@@ -84,11 +87,25 @@ fslmaths FIT_ISOVF_ftissue.nii.gz -mul FIT_OD.nii.gz FIT_OD_modulated.nii.gz
 ```
 The **modulated NDI and ODI images** should look like the below:
 
-MODULATED NDI AND ODI IMAGE HERE
+### Modulated NDI
+![alt text](noddi_data/screenshots/mNDI.png)
+
+### Modulated ODI
+![alt text](noddi_data/screenshots/mODI.png)
 
 ## 3. Extracting Regions of Interest Measures
 
-We now extract ROI measures for the `modulated NDI`, `modulated ODI` and `tissue fraction` images.
+We use ROIs based on fibre bundles from the IIT human brain atlas [ https://www.nitrc.org/projects/iit/ ]. See below for the list of ROIs (see `noddi_data/Preprocessing.md` for details):
+
+- Corpus callosum: `CC_256_roi_native.nii.gz`
+- Left Cingulate: `C_L_256_roi_native.nii.gz`
+- Right Cingulate: `C_R_256_roi_native.nii.gz`
+- Left Corticospinal Tract: `CST_L_256_roi_native.nii.gz`
+- Right Corticospinal Tract: `CST_R_256_roi_native.nii.gz`
+- Left Uncinate Fasciculus: `UF_L_256_roi_native.nii.gz`
+- Left Uncinate Fasciculus: `UF_R_256_roi_native.nii.gz`
+
+We'll now extract these ROI measures for the `modulated NDI`, `modulated ODI` and `tissue fraction` images.
 
 First lets set up a .csv file to store our ROI measures in.
 
