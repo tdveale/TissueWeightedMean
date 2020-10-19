@@ -1,7 +1,7 @@
 # NODDI Tissue Weighting
 
 ## What is NODDI?
-NODDI (**N**eurite **O**rientation **D**ispersion and **D**ensity **I**maging) is a microstructural modelling approach for diffusion MRI data [Zhang et al., NeuroImage 2012]. Diffusion within a voxel is modelled using three compartments representing three microstructural environments:
+NODDI (**N**eurite **O**rientation **D**ispersion and **D**ensity **I**maging) is a microstructural modelling approach for diffusion MRI data [Zhang *et al.*, NeuroImage 2012]. Diffusion within a voxel is modelled using three compartments representing three microstructural environments:
 
 1. Isotropic diffusion compartment (i.e. water in free-flowing regions like the cerebrospinal fluid, CSF). The NODDI model provides this directly as:
   - **ISO**: Isotropic diffusion fraction
@@ -56,7 +56,7 @@ To perform tissue weighted average correction, you will need the following outpu
 - NDI image (* *_ficvf.nii.gz* or *FIT_ICVF.nii.gz*)
 - ODI image (* *_odi.nii.gz* or *FIT_OD.nii.gz*)
 - Brain mask for NODDI images (* *_mask.nii.gz*)
-- Regions of interest in NODDI image space (* *roi_native.nii.gz*)
+- Regions of interest in NODDI image space (* *roi_native.nii.gz*) [for example using the JHU Atlas]
 
 To follow this tutorial exactly, download and extract the zip files in `noddi_data/` into one directory on your computer. Preprocessing steps for recreating this data can be found in `noddi_data/Preprocessing.md`
 
@@ -70,7 +70,7 @@ We can calculate **1-ISO** in one line using FSL by inverting the **ISO** image 
 fslmaths FIT_ISOVF.nii.gz -mul -1 -add 1 -mas NODDI_DWI_mask.nii.gz FIT_ISOVF_ftissue.nii.gz
 ```
 
-The image should look like below:
+The **tissue fraction map image** should look like below:
 
 FTISSUE IMAGE HERE
 
@@ -82,7 +82,7 @@ We now multiply the **NDI** and **ODI** images by this tissue fraction map to cr
 fslmaths FIT_ISOVF_ftissue.nii.gz -mul FIT_ICVF.nii.gz FIT_ICVF_modulated.nii.gz
 fslmaths FIT_ISOVF_ftissue.nii.gz -mul FIT_OD.nii.gz FIT_OD_modulated.nii.gz
 ```
-The images should look like the below:
+The **modulated NDI and ODI images** should look like the below:
 
 MODULATED NDI AND ODI IMAGE HERE
 
