@@ -1,7 +1,8 @@
 #!/bin/bash
+# TO DO: make input arguments named parameters
 
 # Script that calculates tissue weighted ROIs from NODDI inputs and ROI images
-# collect inputs - make these names inputs instead of by position
+# collect inputs
 iso=$1
 ndi=$2
 odi=$3
