@@ -35,9 +35,9 @@ See below for a tutorial on how to calculate tissue weighted ROI measures for **
 The steps for calculating tissue weighted regional averages of **NDI** and **ODI** are below:
 
 1. Generate the tissue fraction map (**1-ISO**).
-2. Multiply both the **NDI** and **ODI** maps by the **1-ISO** map.
-3. Extract the ROI measures for **NDI**, **ODI** and **1-ISO**.
-4. Divide regional **NDI** and **ODI** measures by the corresponding **1-ISO** region.
+2. Multiply both the **NDI** and **ODI** maps by the **tissue fraction** map.
+3. Extract the ROI measures for **NDI**, **ODI** and **tissue fraction**.
+4. Divide regional **NDI** and **ODI** measures by the corresponding **tissue fraction** region.
 
 We will use the NODDI outputs from the example NODDI dataset [http://mig.cs.ucl.ac.uk/index.php?n=Tutorial.NODDImatlab] to calculate tissue weighted **NDI** and **ODI** measures for tracts of interest.
 
@@ -66,7 +66,7 @@ To follow this tutorial exactly, download and extract `noddi_data/AMICO_FIT.zip`
 
 First we will create a tissue fraction map (*ISOVF_ftissue*). This is the fraction of the voxel remaining after **ISO** has been calculated and is attributed to tissue (**1-ISO**).
 
-We can calculate **1-ISO** in one line using FSL by inverting the **ISO** image and adding 1.
+We can calculate **tissue fraction** in one line using FSL by inverting the **ISO** image and adding 1.
 
 ```
 fslmaths FIT_ISOVF.nii.gz -mul -1 -add 1 -mas NODDI_DWI_mask.nii.gz FIT_ISOVF_ftissue.nii.gz
@@ -132,7 +132,7 @@ Finally for tissue fraction:
 for roi in *roi_native.nii.gz; do istats=(`fslstats FIT_ISOVF_ftissue.nii.gz -k ${roi} -m -s`); echo TissueFraction,${roi%_256_roi_native.nii.gz},${istats[0]},${istats[1]} >> NODDI_FIBRE_ROIs.csv; done
 ```
 
-## 4. Divide Regional NDI and ODI measures by 1-ISO
+## 4. Divide Regional NDI and ODI measures by Tissue Fraction
 
 Finally, we have all we need to calculate tissue weighted averages in our csv file `NODDI_FIBRE_ROIs.csv`. The corpus callosum values for each metric is shown below as an example.
 
