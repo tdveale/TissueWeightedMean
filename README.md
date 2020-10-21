@@ -153,4 +153,10 @@ All that remains is to divide the modulated **NDI** and **ODI** ROIs mean values
 
 # NODDI Tissue Weighting Tool
 
-We have included a function in this repository (FUNCTION NAME HERE) to aid in the calculation of tissue weighted averages.
+We have included a function in this repository `NODDI-tissue-weighting-tool/scripts/calculate_tissue_weighted_rois.sh` to aid in the calculation of tissue weighted averages.
+
+The command can be run as follows to obtain the spreadsheet created in the tutorial:
+
+```
+source NODDI-tissue-weighting-tool/scripts/calculate_tissue_weighted_rois.sh FIT_ISOVF.nii.gz FIT_ICVF.nii.gz FIT_OD.nii.gz NODDI_DWI_mask.nii.gz 256_roi_native NODDI_FIBRE_ROIs.csv
+```
