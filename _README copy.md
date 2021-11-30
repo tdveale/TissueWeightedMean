@@ -1,14 +1,4 @@
-# Tissue-Weighted Mean - Example application to NODDI
-
-## Why Tissue-Weighted Means?
-
-Regions of interest (ROI) that border CSF, such as the corpus callosum, fornix and cortical GM, contain voxels that are part brain tissue and part CSF. This is problematic for calculating ROI means of tissue metrics using the conventional arithmetic mean, which treats all voxels equally, over-weighting the contribution to the mean of voxels with less tissue.
-
-We can account for this by assigning greater importance to voxels with a higher tissue fraction. This can be done by calculating a weighted average of tissue metrics using the tissue fraction estimated from diffusion MRI models that account for CSF contamination (such as NODDI and free water elimination method).
-
-It is important to notice that this bias can occur also in regions of the brain affected by pathological processes, such as atrophy, where healthy grey matter tissue is replaced by CSF.
-
-This tutorial uses NODDI as an example application to explain how to calculate tissue-weighted means of diffusion MRI microstructure tissue parameters. 
+# NODDI Tissue Weighting
 
 ## What is NODDI?
 NODDI (**N**eurite **O**rientation **D**ispersion and **D**ensity **I**maging) is a microstructural modelling approach for diffusion MRI data [Zhang *et al.*, NeuroImage 2012]. Diffusion within a voxel is modelled using three compartments representing three microstructural environments:
@@ -21,16 +11,28 @@ The remaining diffusion within a voxel is attributed to brain tissue and split i
 2. Extra-neurite diffusion compartment (i.e. water outside axons).
 3. Intra-neurite diffusion compartment (i.e. water within axons).
 
-  Two microstructural properties of brain tissue can be modelled from the intra-neurite compartment:
+  Two microstructural properties can be modelled from the intra-neurite compartment:
 
    - **NDI**: Neurite Density Index
    - **ODI**: Orientation Dispersion Index
 
-# Tissue-Weighted Mean Tutorial
+## Why Tissue Weighting?
+
+In healthy controls, voxels deep within the brain will tend to have lower **ISO** values as they are far from the CSF and most of the diffusion signal is attributed to the properties of brain tissue (grey and white matter, GM and WM). In this deep GM and WM tissue, **NDI** and **ODI** values will be comparable across voxels as they are associated with the majority of diffusion signal within the voxel.
+
+However, this does not apply in regions near the CSF such as the corpus callosum, the fornix and cortical GM. Voxels closer to the CSF will tend to have higher **ISO** values compared to voxels deeper in the brain. This becomes troubling when extracting diffusion measures in specific regions of interest (ROIs). Although voxels within these ROIs will vary in the fraction of tissue the **NDI** and **ODI** are calculated from, all voxels are treated equally.
+
+We can account for this by assigning greater importance to voxels with a higher tissue fraction (i.e. lower **ISO**). This can be done by calculating a weighted average of **NDI** and **ODI** in ROIs, while weighting for the tissue fraction (**1-ISO**), which represents the voxels belonging to the GM and WM tissue, rather than CSF.
+
+It is important to notice that this bias can occur also in regions of the brain affected by pathological processes, such as atrophy, where healthy GM tissue is replaced by CSF.
+
+See below for a tutorial on how to calculate tissue weighted ROI measures for **NDI** and **ODI**.
+
+# Tissue Weighting Tutorial
 
 ## Overview
 
-The steps for calculating tissue-weighted means of NODDI tissue parameters **NDI** and **ODI** are below:
+The steps for calculating tissue weighted regional averages of **NDI** and **ODI** are below:
 
 1. Generate the tissue fraction map (**1-ISO**).
 2. Multiply both the **NDI** and **ODI** maps by the **tissue fraction** map.
