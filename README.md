@@ -32,10 +32,10 @@ The remaining diffusion within a voxel is attributed to brain tissue and split i
 
 The steps for calculating tissue-weighted means of NODDI tissue parameters **NDI** and **ODI** are below:
 
-1. Generate the tissue fraction map (**1-ISO**).
-2. Multiply both the **NDI** and **ODI** maps by the **tissue fraction** map.
-3. Extract the ROI measures for **NDI**, **ODI** and **tissue fraction**.
-4. Divide regional **NDI** and **ODI** measures by the corresponding **tissue fraction** region.
+1. Generate the tissue fraction (TF) map = **1-ISO**.
+2. Voxel-wise multiply both the **NDI** and **ODI** maps by the **TF** map.
+3. Extract the ROI mean for (i) **NDIxTF**, (ii) **ODIxTF** and (iii) **TF**.
+4. Divide mean **NDIxTF** and mean **ODIxTF** measures by the mean **TF**.
 
 We will use the NODDI outputs from the example NODDI dataset [http://mig.cs.ucl.ac.uk/index.php?n=Tutorial.NODDImatlab] to calculate tissue weighted **NDI** and **ODI** measures for tracts of interest.
 
