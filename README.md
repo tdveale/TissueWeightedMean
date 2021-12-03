@@ -34,8 +34,8 @@ The steps for calculating tissue-weighted means of NODDI tissue parameters **NDI
 
 1. Generate the tissue fraction (TF) map = **1-ISO**.
 2. Voxel-wise multiply both the **NDI** and **ODI** maps by the **TF** map.
-3. Extract the ROI mean for (i) **NDIxTF**, (ii) **ODIxTF** and (iii) **TF**.
-4. Divide mean **NDIxTF** and mean **ODIxTF** measures by the mean **TF**.
+3. Extract the ROI mean of **NDI** * **TF**, **ODI** * **TF** and **TF**.
+4. Divide mean **NDI** * **TF** and mean **ODI** * **TF** measures by the mean **TF**.
 
 We will use the NODDI outputs from the example NODDI dataset [http://mig.cs.ucl.ac.uk/index.php?n=Tutorial.NODDImatlab] to calculate tissue weighted **NDI** and **ODI** measures for tracts of interest.
 
