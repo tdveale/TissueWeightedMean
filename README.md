@@ -9,7 +9,7 @@
 	- [Overview](#overview)
 	- [Set up](#set-up)
 		- [Software](#software)
-		- [Files](#files)
+		- [Images](#images)
 	- [Step-By-Step Guide](#step-by-step-guide)
 		- [Generating Tissue-Fraction Maps](#1-generating-tissue-fraction-maps)
 		- [Multiplying NDI & ODI Maps by Tissue Fraction](#2-multiplying-ndi-and-odi-maps-by-tissue-fraction)
@@ -64,7 +64,7 @@ We will use the NODDI outputs from the example NODDI dataset [http://mig.cs.ucl.
 
 This tutorial is performed on the linux terminal (bash) and requires FSL to be installed. We used FSL 6.0.3 but has also been tested on FSL 5.0.9.
 
-### Files
+### Images
 
 To perform tissue weighted average correction, you will need the following output file from the NODDI preprocessing:
 
