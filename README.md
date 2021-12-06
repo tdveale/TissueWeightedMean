@@ -1,5 +1,23 @@
 # Tissue-Weighted Mean - Example application to NODDI
 
+**Table of Contents**
+
+
+- [Why Tissue-Weighted Means?](#why-tissue-weighted-means)
+- [What is NODDI?](#what-is-noddi)
+- [Tutorial](#tissue-weighted-mean-tutorial)
+	- [Overview](#overview)
+	- [Set up](#set-up)
+		- [Software](#software)
+		- [Files](#files)
+	- [Step-By-Step Guide](#step-by-step-guide)
+		- [Generating Tissue-Fraction Maps](#1-generating-tissue-fraction-maps)
+		- [Multiplying NDI & ODI Maps by Tissue Fraction](#2-multiplying-ndi-and-odi-maps-by-tissue-fraction)
+		- [Extracting Region-Of-Interest Measures](#3-extracting-region-of-interest-measures)
+		- [Dividing Regional NDI and ODI Measures By Tissue Fraction](#4-divide-regional-ndi-and-odi-measures-by-tissue-fraction)
+- [Tissue-weighted Mean Tool](#tissue-weighted-mean-tool)
+
+
 ## Why Tissue-Weighted Means?
 
 Regions of interest (ROI) that border CSF, such as the corpus callosum, fornix and cortical GM, contain voxels that are part brain tissue and part CSF. This is problematic for calculating ROI means of tissue metrics using the conventional arithmetic mean, which treats all voxels equally, over-weighting the contribution to the mean of voxels with less tissue.
@@ -60,7 +78,9 @@ We used AMICO [Daducci *et al.*, NeuroImage 2015] to create our NODDI maps which
 
 To follow this tutorial exactly, download and extract `noddi_data/AMICO_FIT.zip` and `noddi_data/ICBM_native_rois.zip` into the same directory on your computer.
 
-## 1. Generating Tissue Fraction Maps (1-ISO)
+## Step-by-step guide
+
+### 1. Generating Tissue Fraction Maps
 
 First we will create a tissue fraction map (*ISOVF_ftissue*). This is the fraction of the voxel remaining after **ISO** has been calculated and is attributed to tissue (**1-ISO**).
 
@@ -71,11 +91,11 @@ fslmaths FIT_ISOVF.nii.gz -mul -1 -add 1 -mas NODDI_DWI_mask.nii.gz FIT_ISOVF_ft
 ```
 
 The **tissue fraction map image** should look like below:
-### Tissue Fraction Map
+#### Tissue Fraction Map
 
 ![alt text](noddi_data/screenshots/FTISSUE.png)
 
-## 2. Multiplying NDI and ODI Maps by 1-ISO
+### 2. Multiplying NDI and ODI Maps by Tissue Fraction
 
 We now multiply the **NDI** and **ODI** images by this tissue fraction map to create *modulated* NDI and ODI images. These allow for the tissue weighting calculation to occur on the ROI level later (step 4).
 
@@ -85,13 +105,13 @@ fslmaths FIT_ISOVF_ftissue.nii.gz -mul FIT_OD.nii.gz FIT_OD_modulated.nii.gz
 ```
 The **modulated NDI and ODI images** should look like the below:
 
-### Modulated NDI
+#### Modulated NDI
 ![alt text](noddi_data/screenshots/mNDI.png)
 
-### Modulated ODI
+#### Modulated ODI
 ![alt text](noddi_data/screenshots/mODI.png)
 
-## 3. Extracting Regions of Interest Measures
+### 3. Extracting Region of Interest Measures
 
 We use ROIs based on fibre bundles from the IIT human brain atlas [ https://www.nitrc.org/projects/iit/ ]. See below for the list of ROIs (see `noddi_data/Preprocessing.md` for details):
 
@@ -130,7 +150,7 @@ Finally for tissue fraction:
 for roi in *roi_native.nii.gz; do istats=(`fslstats FIT_ISOVF_ftissue.nii.gz -k ${roi} -m -s`); echo TissueFraction,${roi%_256_roi_native.nii.gz},${istats[0]},${istats[1]} >> NODDI_FIBRE_ROIs.csv; done
 ```
 
-## 4. Divide Regional NDI and ODI measures by Tissue Fraction
+### 4. Divide Regional NDI and ODI measures by Tissue Fraction
 
 Finally, we have all we need to calculate tissue weighted averages in our csv file `NODDI_FIBRE_ROIs.csv`. The corpus callosum values for each metric is shown below as an example.
 
@@ -149,7 +169,7 @@ All that remains is to divide the modulated **NDI** and **ODI** ROIs mean values
 | ODI_Weighted    | CC      |  0.17214777 |
 
 
-# NODDI Tissue Weighting Tool
+# Tissue-Weighted Mean Tool
 
 We have included a function in this repository `NODDI-tissue-weighting-tool/scripts/calculate_tissue_weighted_rois.sh` to aid in the calculation of tissue weighted averages.
 
