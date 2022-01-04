@@ -28,6 +28,8 @@ It is important to notice that this bias can occur also in regions of the brain 
 
 This tutorial uses NODDI as an example application to explain how to calculate tissue-weighted means of diffusion MRI microstructure tissue parameters. 
 
+For a more detailed explanation of the tissue-weighted mean, see this [blog post][tissue-weighted-mean-blog].
+
 ## What is NODDI?
 NODDI (**N**eurite **O**rientation **D**ispersion and **D**ensity **I**maging) is a microstructural modelling approach for diffusion MRI data [Zhang *et al.*, NeuroImage 2012]. Diffusion within a voxel is modelled using three compartments representing three microstructural environments:
 
@@ -178,3 +180,7 @@ The command can be run as follows to obtain the spreadsheet created in the tutor
 ```
 source NODDI-tissue-weighting-tool/scripts/calculate_tissue_weighted_rois.sh FIT_ISOVF.nii.gz FIT_ICVF.nii.gz FIT_OD.nii.gz NODDI_DWI_mask.nii.gz 256_roi_native NODDI_FIBRE_ROIs.csv
 ```
+
+
+[tissue-weighted-mean-blog]: https://csparker.github.io/research/2021/11/16/Tissue-weighted-mean.html
+
