@@ -1,7 +1,14 @@
 # Preprocessing Steps Used for Example Data
 
-These steps do not need to be carried out as the data to complete the tissue weighting tutorial is already made available here. We provide the information below for completeness and transparency.
+These steps do not need to be carried out as the data to complete the tissue weighting tutorial is already made available in this repository. We provide the information below for completeness and transparency.
 
+Note that once you have downloaded the example data [http://mig.cs.ucl.ac.uk/index.php?n=Tutorial.NODDImatlab] you can skip the explanation below and run the preprocessing using the .sh file (noddi_data/Preprocessing.sh)
+
+```
+sh Preprocessing.sh
+```
+
+Please read on to learn about how the preprocessing was done.
 
 ## 1. Prepare Example Data Files
 

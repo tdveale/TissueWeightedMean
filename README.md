@@ -48,6 +48,31 @@ The remaining diffusion within a voxel is attributed to brain tissue and split i
 
 # Tissue-Weighted Mean Tutorial
 
+
+## Set up
+
+### Software
+
+This tutorial is performed on the linux terminal (bash) and requires FSL to be installed. 
+
+### Images
+
+We will use the NODDI outputs from the example NODDI dataset [http://mig.cs.ucl.ac.uk/index.php?n=Tutorial.NODDImatlab] to calculate tissue weighted **NDI** and **ODI** measures for tracts of interest.
+
+To calculate tissue-weighted means, you will need the following output file from the NODDI preprocessing:
+
+- ISO image (* *_fiso.nii.gz* or *FIT_ISOVF.nii.gz*)
+- NDI image (* *_ficvf.nii.gz* or *FIT_ICVF.nii.gz*)
+- ODI image (* *_odi.nii.gz* or *FIT_OD.nii.gz*)
+- Brain mask for NODDI images (* *_mask.nii.gz*)
+- Regions of interest in NODDI image space (* *roi_native.nii.gz*) [for example using the IIT fibers ROIs in this tutorial]
+
+We used AMICO [Daducci *et al.*, NeuroImage 2015] to create our NODDI maps which have the filename convention of `FIT_*.nii.gz`. Details on how we processed the example data used below can be found in `noddi_data/Preprocessing.md`.
+
+To follow this tutorial exactly, download and extract `noddi_data/AMICO_FIT.zip` and `noddi_data/ICBM_native_rois.zip` into the same directory on your computer.
+
+## Step-by-step guide
+
 ## Overview
 
 The steps for calculating tissue-weighted means of NODDI tissue parameters **NDI** and **ODI** are below:
@@ -57,36 +82,12 @@ The steps for calculating tissue-weighted means of NODDI tissue parameters **NDI
 3. Extract the ROI mean of **NDI** * **TF**, **ODI** * **TF** and **TF**.
 4. Divide mean **NDI** * **TF** and mean **ODI** * **TF** measures by the mean **TF**.
 
-We will use the NODDI outputs from the example NODDI dataset [http://mig.cs.ucl.ac.uk/index.php?n=Tutorial.NODDImatlab] to calculate tissue weighted **NDI** and **ODI** measures for tracts of interest.
-
-
-## Set up
-
-### Software
-
-This tutorial is performed on the linux terminal (bash) and requires FSL to be installed. We used FSL 6.0.3 but has also been tested on FSL 5.0.9.
-
-### Images
-
-To perform tissue weighted average correction, you will need the following output file from the NODDI preprocessing:
-
-- ISO image (* *_fiso.nii.gz* or *FIT_ISOVF.nii.gz*)
-- NDI image (* *_ficvf.nii.gz* or *FIT_ICVF.nii.gz*)
-- ODI image (* *_odi.nii.gz* or *FIT_OD.nii.gz*)
-- Brain mask for NODDI images (* *_mask.nii.gz*)
-- Regions of interest in NODDI image space (* *roi_native.nii.gz*) [for example using the IIT fibres ROIs in this tutorial]
-
-We used AMICO [Daducci *et al.*, NeuroImage 2015] to create our NODDI maps which have the filename convention of `FIT_*.nii.gz`. Details on how we processed the example data used below can be found in `noddi_data/Preprocessing.md`.
-
-To follow this tutorial exactly, download and extract `noddi_data/AMICO_FIT.zip` and `noddi_data/ICBM_native_rois.zip` into the same directory on your computer.
-
-## Step-by-step guide
 
 ### 1. Generating Tissue Fraction Maps
 
-First we will create a tissue fraction map (*ISOVF_ftissue*). This is the fraction of the voxel remaining after **ISO** has been calculated and is attributed to tissue (**1-ISO**).
+First we will create a tissue fraction map (*ISOVF_ftissue*). This is the fraction of non-CSF in a voxel and is calculated as (**1-ISO**).
 
-We can calculate **tissue fraction** in one line using FSL by inverting the **ISO** image and adding 1.
+In practice we can calculate **tissue fraction** in one line using FSL by inverting the **ISO** image and adding 1.
 
 ```
 fslmaths FIT_ISOVF.nii.gz -mul -1 -add 1 -mas NODDI_DWI_mask.nii.gz FIT_ISOVF_ftissue.nii.gz
@@ -115,7 +116,7 @@ The **modulated NDI and ODI images** should look like the below:
 
 ### 3. Extracting Region of Interest Measures
 
-We use ROIs based on fibre bundles from the IIT human brain atlas [ https://www.nitrc.org/projects/iit/ ]. See below for the list of ROIs (see `noddi_data/Preprocessing.md` for details):
+We use ROIs based on fiber bundles from the IIT human brain atlas [ https://www.nitrc.org/projects/iit/ ]. See below for the list of ROIs (see `noddi_data/Preprocessing.md` for details):
 
 - Corpus callosum: `CC_256_roi_native.nii.gz`
 - Left Cingulate: `C_L_256_roi_native.nii.gz`
@@ -130,46 +131,51 @@ We'll now extract these ROI measures for the `modulated NDI`, `modulated ODI` an
 First lets set up a .csv file to store our ROI measures in.
 
 ```
-echo "NODDI_METRIC,ROI,MEAN,SD" > NODDI_FIBRE_ROIs.csv
+echo "NODDI_METRIC,ROI,MEAN,SD" > NODDI_FIBER_ROIs.csv
 ```
 
-Then for each of our images, we loop through ROIs, extract measures and store in our csv file `NODDI_FIBRE_ROIs.csv`.
+Then for each of our images, we loop through ROIs, extract measures and store in our csv file `NODDI_FIBER_ROIs.csv`.
 
 First for modulated NDI:
 ```
-for roi in *roi_native.nii.gz; do istats=(`fslstats FIT_ICVF_modulated.nii.gz -k ${roi} -m -s`); echo mNDI,${roi%_256_roi_native.nii.gz},${istats[0]},${istats[1]} >> NODDI_FIBRE_ROIs.csv; done
+for roi in *roi_native.nii.gz; do istats=(`fslstats FIT_ICVF_modulated.nii.gz -k ${roi} -m -s`); echo mNDI,${roi%_256_roi_native.nii.gz},${istats[0]},${istats[1]} >> NODDI_FIBER_ROIs.csv; done
 ```
 
 Then for modulated ODI:
 
 ```
-for roi in *roi_native.nii.gz; do istats=(`fslstats FIT_OD_modulated.nii.gz -k ${roi} -m -s`); echo mODI,${roi%_256_roi_native.nii.gz},${istats[0]},${istats[1]} >> NODDI_FIBRE_ROIs.csv; done
+for roi in *roi_native.nii.gz; do istats=(`fslstats FIT_OD_modulated.nii.gz -k ${roi} -m -s`); echo mODI,${roi%_256_roi_native.nii.gz},${istats[0]},${istats[1]} >> NODDI_FIBER_ROIs.csv; done
 ```
 
 Finally for tissue fraction:
 
 ```
-for roi in *roi_native.nii.gz; do istats=(`fslstats FIT_ISOVF_ftissue.nii.gz -k ${roi} -m -s`); echo TissueFraction,${roi%_256_roi_native.nii.gz},${istats[0]},${istats[1]} >> NODDI_FIBRE_ROIs.csv; done
+for roi in *roi_native.nii.gz; do istats=(`fslstats FIT_ISOVF_ftissue.nii.gz -k ${roi} -m -s`); echo TissueFraction,${roi%_256_roi_native.nii.gz},${istats[0]},${istats[1]} >> NODDI_FIBER_ROIs.csv; done
 ```
 
 ### 4. Divide Regional NDI and ODI measures by Tissue Fraction
 
-Finally, we have all we need to calculate tissue weighted averages in our csv file `NODDI_FIBRE_ROIs.csv`. The corpus callosum values for each metric is shown below as an example.
+Finally, we have all we need to calculate tissue weighted averages in our csv file `NODDI_FIBER_ROIs.csv`. The corpus callosum values for each metric is shown below as an example.
 
 
-| NODDI_METRIC    | ROI     |  MEAN       | SD       |
-| -----------     | :----:  | :---------: | :-------:|
-| mNDI            | CC      |  0.486252   | 0.138766 |
-| mODI            | CC      |  0.146003   | 0.118653 |
-| TissueFraction  | CC      |  0.848126   | 0.213132 |
+| ROI     | NDI_MOD_MEAN   | OD_MOD_MEAN   | TF_MEAN        |
+| :----:  | :------------: | :------------:| :------------: |
+| CC      |  0.486252      | 0.146003      | 0.848126       |
+| CST_L   |  0.557030      | 0.112910      | 0.806516       |
+| CST_R   |  0.549890      | 0.127278      | 0.762135       |
 
 All that remains is to divide the modulated **NDI** and **ODI** ROIs mean values by the corresponding tissue fraction ROI mean values in your software of choice. Doing the following will create the tissue weighted values below:
 
-| NODDI_METRIC    | ROI     |  MEAN       |
-| -----------     | :----:  | :---------: |
-| NDI_Weighted    | CC      |  0.57332519 |
-| ODI_Weighted    | CC      |  0.17214777 |
+| ROI     | NDI_TW_MEAN    | OD_TW_MEAN    | 
+| :----:  | :------------: | :------------:| 
+| CC      |  0.573325      | 0.172148      | 
+| CST_L   |  0.690662      | 0.139997      | 
+| CST_R   |  0.721513      | 0.167002      | 
 
+This can be done in Excel. Alternatively, a script to generate this table is below:
+```
+echo "ROI, NDI_TWMEAN, OD_TWMEAN" > TWM_NODDI_FIBER_ROIs.csv; skip_headers=1; while IFS=, read -r roi_short_name ndi_mod_mean od_mod_mean tf_mean; do if ((skip_headers)); then ((skip_headers--)); else ndi_twm=`printf "%0.6f\n" $(bc -q <<< "scale=10; ${ndi_mod_mean}/${tf_mean}")`; od_twm=`printf "%0.6f\n" $(bc -q <<< "scale=10; ${od_mod_mean}/${tf_mean}")`; line="${roi_short_name}, ${ndi_twm}, ${od_twm}"; echo ${line} >> TWM_NODDI_FIBER_ROIs.csv; fi; done < NODDI_FIBER_ROIs.csv; echo "Tissue-weighted mean ROI stats saved to: ${data_dir}/TWM_NODDI_FIBER_ROIs.csv"
+```
 
 # Tissue-Weighted Mean Tool
 
@@ -178,7 +184,7 @@ We have included a function in this repository `NODDI-tissue-weighting-tool/scri
 The command can be run as follows to obtain the spreadsheet created in the tutorial:
 
 ```
-source NODDI-tissue-weighting-tool/scripts/calculate_tissue_weighted_rois.sh FIT_ISOVF.nii.gz FIT_ICVF.nii.gz FIT_OD.nii.gz NODDI_DWI_mask.nii.gz 256_roi_native NODDI_FIBRE_ROIs.csv
+source NODDI-tissue-weighting-tool/scripts/calculate_tissue_weighted_rois.sh FIT_ISOVF.nii.gz FIT_ICVF.nii.gz FIT_OD.nii.gz NODDI_DWI_mask.nii.gz 256_roi_native NODDI_FIBER_ROIs.csv
 ```
 
 
