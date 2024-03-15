@@ -61,7 +61,7 @@ We will use the NODDI outputs from the example NODDI dataset [http://mig.cs.ucl.
 
 To calculate tissue-weighted means, you will need the following output file from the NODDI preprocessing:
 
-- ISO image (* *_fiso.nii.gz* or *FIT_ISOVF.nii.gz*)
+- FWF image (* *_fiso.nii.gz* or *FIT_ISOVF.nii.gz*)
 - NDI image (* *_ficvf.nii.gz* or *FIT_ICVF.nii.gz*)
 - ODI image (* *_odi.nii.gz* or *FIT_OD.nii.gz*)
 - Brain mask for NODDI images (* *_mask.nii.gz*)
