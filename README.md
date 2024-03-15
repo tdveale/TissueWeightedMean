@@ -155,7 +155,7 @@ Finally for tissue fraction:
 for roi in *roi_native.nii.gz; do istats=(`fslstats FIT_ISOVF_ftissue.nii.gz -k ${roi} -m -s`); echo TissueFraction,${roi%_256_roi_native.nii.gz},${istats[0]},${istats[1]} >> NODDI_FIBER_ROIs.csv; done
 ```
 
-### 4. Divide Regional NDI and ODI measures by Tissue Fraction
+### 4. Divide Regional Modulated NDI and ODI measures by Regional Tissue Fraction
 
 Finally, we have all we need to calculate tissue weighted averages in our csv file `NODDI_FIBER_ROIs.csv`. The corpus callosum values for each metric is shown below as an example.
 
