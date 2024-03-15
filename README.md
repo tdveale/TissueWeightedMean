@@ -33,8 +33,8 @@ For a more detailed explanation of the tissue-weighted mean, see this [blog post
 ## What is NODDI?
 NODDI (**N**eurite **O**rientation **D**ispersion and **D**ensity **I**maging) is a microstructural modelling approach for diffusion MRI data [Zhang *et al.*, NeuroImage 2012]. Diffusion within a voxel is modelled using three compartments representing three microstructural environments:
 
-1. Isotropic diffusion compartment (i.e. water in free-flowing regions like the cerebrospinal fluid, CSF). The NODDI model provides this directly as:
-  - **ISO**: Isotropic diffusion fraction
+1. Free water compartment (i.e. water in free-flowing regions like the cerebrospinal fluid, CSF). The NODDI model provides this directly as:
+  - **FWF**: Formerly known as the isotropic diffusion fraction
 
 The remaining diffusion within a voxel is attributed to brain tissue and split into two compartments:
 
@@ -77,7 +77,7 @@ To follow this tutorial exactly, download and extract `noddi_data/AMICO_FIT.zip`
 
 The steps for calculating tissue-weighted means of NODDI tissue parameters **NDI** and **ODI** are below:
 
-1. Generate the tissue fraction (TF) map = **1-ISO**.
+1. Generate the tissue fraction (TF) map = **1-FWF**.
 2. Voxel-wise multiply both the **NDI** and **ODI** maps by the **TF** map.
 3. Extract the ROI mean of **NDI** * **TF**, **ODI** * **TF** and **TF**.
 4. Divide mean **NDI** * **TF** and mean **ODI** * **TF** measures by the mean **TF**.
@@ -85,13 +85,15 @@ The steps for calculating tissue-weighted means of NODDI tissue parameters **NDI
 
 ### 1. Generating Tissue Fraction Maps
 
-First we will create a tissue fraction map (*ISOVF_ftissue*). This is the fraction of non-CSF in a voxel and is calculated as (**1-ISO**).
+First we will create a tissue fraction map (*ISOVF_ftissue*). This is the fraction of non-CSF in a voxel and is calculated as (**1-FWF**).
 
-In practice we can calculate **tissue fraction** in one line using FSL by inverting the **ISO** image and adding 1.
+In practice we can calculate **tissue fraction** in one line using FSL by inverting the **FWF** image and adding 1.
 
 ```
 fslmaths FIT_ISOVF.nii.gz -mul -1 -add 1 -mas NODDI_DWI_mask.nii.gz FIT_ISOVF_ftissue.nii.gz
 ```
+
+We need to include a masking step to exclude this step for the voxels outside the brain region.
 
 The **tissue fraction map image** should look like below:
 #### Tissue Fraction Map
